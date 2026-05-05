@@ -2,17 +2,10 @@ package com.task.compasetask.presentation.nav
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
-import com.task.compasetask.presentation.screens.CartScreen
-import com.task.compasetask.presentation.screens.HomeScreen
-import com.task.compasetask.presentation.screens.OrdersScreen
-import com.task.compasetask.presentation.screens.SignInScreen
-import com.task.compasetask.presentation.screens.SignUpScreen
-
+import com.task.compasetask.presentation.screens.*
 
 sealed class Screen(val route: String) {
     object SignIn : Screen("signin")
@@ -20,6 +13,8 @@ sealed class Screen(val route: String) {
     object Home : Screen("home")
     object Cart : Screen("cart")
     object Orders : Screen("orders")
+    object Menu : Screen("menu")      // ✅ جديد
+    object Profile : Screen("profile") // ✅ جديد
 }
 
 @Composable
@@ -44,6 +39,12 @@ fun AppNavigation(modifier: Modifier = Modifier) {
         }
         composable(Screen.Orders.route) {
             OrdersScreen(navController)
+        }
+        composable(Screen.Menu.route) {
+            MenuScreen(navController)
+        }
+        composable(Screen.Profile.route) {
+            ProfileScreen(navController)
         }
     }
 }

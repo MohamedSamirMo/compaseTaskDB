@@ -166,10 +166,10 @@ fun SignUpScreen(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Column(modifier = Modifier.padding(20.dp)) {
-                        // أزرار التبديل (Sign In / Sign Up)
                         Row(
                             modifier = Modifier
                                 .wrapContentWidth()
+                                .height(40.dp)
                                 .align(Alignment.CenterHorizontally)
                                 .border(
                                     width = 1.dp,
@@ -191,43 +191,15 @@ fun SignUpScreen(
                             )
                         }
 
-                        Spacer(modifier = Modifier.height(16.dp))
 
-                        // حقل الاسم الكامل
                         var showPassword by remember { mutableStateOf(false) }
                         var showConfirmPassword by remember { mutableStateOf(false) }
 
                         CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
                             TextField(
-                                value = uiState.username,
-                                onValueChange = { viewModel.onEvent(SignUpEvent.UsernameChanged(it)) },
-                                label = { Text("Full Name") },
-                                modifier = Modifier.fillMaxWidth(),
-                                singleLine = true,
-                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-                                enabled = !uiState.isLoading,
-                                colors = TextFieldDefaults.colors(
-                                    focusedContainerColor = Color.Transparent,
-                                    unfocusedContainerColor = Color.Transparent,
-                                    disabledContainerColor = Color.Transparent,
-                                    focusedIndicatorColor = Color.Gray,
-                                    unfocusedIndicatorColor = Color.LightGray,
-                                    disabledIndicatorColor = Color.LightGray,
-                                    focusedLabelColor = Color(0xFFFF9666),
-                                    unfocusedLabelColor = Color.Gray,
-                                    cursorColor = Color(0xFFFF9666)
-                                )
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        // حقل البريد الإلكتروني
-                        CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
-                            TextField(
                                 value = uiState.email,
                                 onValueChange = { viewModel.onEvent(SignUpEvent.EmailChanged(it)) },
-                                label = { Text("Email") },
+                                label = { Text("Enter Email") },
                                 modifier = Modifier.fillMaxWidth(),
                                 singleLine = true,
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
@@ -398,7 +370,6 @@ fun SignUpScreen(
                     }
                 }
 
-                // إضافة SnackbarHost لعرض الرسائل (اختياري، لتحسين تجربة المستخدم)
                 SnackbarHost(
                     hostState = snackbarHostState,
                     modifier = Modifier.padding(8.dp)

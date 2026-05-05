@@ -27,7 +27,7 @@ fun TabButton(text: String, isSelected: Boolean, onClick: () -> Unit) {
             contentColor = if (isSelected) Color.White else Color(0xFFFF9666)
         ),
         shape = RoundedCornerShape(32.dp),
-        elevation = if (isSelected) ButtonDefaults.buttonElevation(4.dp) else ButtonDefaults.buttonElevation(0.dp),
+        elevation = if (isSelected) ButtonDefaults.buttonElevation(1.dp) else ButtonDefaults.buttonElevation(0.dp),
 
     ) {
         Text(text, fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal)
