@@ -22,6 +22,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.task.compasetask.data.models.*
 import com.task.compasetask.presentation.ProductCard
+import com.task.compasetask.presentation.SimpleProductCard
 import com.task.compasetask.presentation.nav.Screen
 import com.task.compasetask.presentation.viewModel.CartViewModel
 
@@ -53,22 +54,21 @@ fun HomeScreen(
     }
 
     Scaffold(
-        containerColor = Color(0xFFFFF5E1),
+        containerColor = Color(0xFFFFF6F2),
         bottomBar = {
-            // ==================== Bottom Navigation Bar ====================
             NavigationBar(
-                containerColor = Color(0xFFFFF5E1),
+                containerColor = Color(0xFFFFFFFF),
                 tonalElevation = 0.dp
             ) {
                 NavigationBarItem(
-                    selected = true, // افتراضياً الصفحة الحالية هي Home
-                    onClick = { /* بالفعل في Home */ },
+                    selected = true,
+                    onClick = { /* Already in Home */ },
                     icon = { Icon(Icons.Default.Home, contentDescription = "Home") },
                     label = { Text("Home") }
                 )
                 NavigationBarItem(
                     selected = false,
-                    onClick = { navController.navigate(Screen.Menu.route) }, // تأكد من وجود هذا المسار
+                    onClick = { navController.navigate(Screen.Menu.route) },
                     icon = { Icon(Icons.Default.Menu, contentDescription = "Menu") },
                     label = { Text("Menu") }
                 )
@@ -80,7 +80,7 @@ fun HomeScreen(
                             badge = {
                                 if (cartItemCount > 0) {
                                     Badge(
-                                        containerColor = Color(0xFF795548),
+                                        containerColor = Color(0xFFFF9666),
                                         contentColor = Color.White
                                     ) { Text(cartItemCount.toString()) }
                                 }
@@ -93,7 +93,7 @@ fun HomeScreen(
                 )
                 NavigationBarItem(
                     selected = false,
-                    onClick = { navController.navigate(Screen.Profile.route) }, // أنشئ Screen.Profile إذا لزم
+                    onClick = { navController.navigate(Screen.Profile.route) },
                     icon = { Icon(Icons.Default.Person, contentDescription = "Profile") },
                     label = { Text("Profile") }
                 )
@@ -109,13 +109,13 @@ fun HomeScreen(
         ) {
             Spacer(modifier = Modifier.height(12.dp))
 
-            // ==================== Top Bar ====================
+            // Top Bar
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Location Selector with Dropdown
+                // Location Selector
                 Box {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
@@ -179,7 +179,7 @@ fun HomeScreen(
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            // ==================== NEW Banner ====================
+            // NEW Banner
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp),
@@ -207,7 +207,8 @@ fun HomeScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // ==================== Featured ====================
+            // Featured
+            // Featured
             Text(
                 text = "Featured",
                 fontSize = 22.sp,
@@ -217,21 +218,24 @@ fun HomeScreen(
 
             Spacer(modifier = Modifier.height(12.dp))
 
+// ✅ إضافة horizontalScroll لجعل القائمة تمرير أفقياً
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .horizontalScroll(rememberScrollState()),   // هذه هي الإضافة الأساسية
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 featuredProducts.forEach { product ->
                     ProductCard(
                         product = product,
-                        onAddToCart = { cartViewModel.addToCart(product) }
+                        onAddToCart = { cartViewModel.addToCart(product) },
+                        onClick = { navController.navigate(Screen.ProductDetail.passId(product.id)) }
                     )
                 }
             }
-
             Spacer(modifier = Modifier.height(32.dp))
 
-            // ==================== Categories ====================
+            // Categories
             Text(
                 text = "Categories",
                 fontSize = 18.sp,
@@ -265,7 +269,8 @@ fun HomeScreen(
 
             Spacer(modifier = Modifier.height(28.dp))
 
-            // ==================== Dynamic Section ====================
+            // Dynamic Section
+            // Dynamic Section - عرض عمودي (vertical) باستخدام SimpleProductCard
             val currentProducts = productsForCategory(selectedCategory)
             if (currentProducts.isNotEmpty()) {
                 Text(
@@ -277,16 +282,15 @@ fun HomeScreen(
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .horizontalScroll(rememberScrollState()),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                // استخدام Column عادي بدون verticalScroll، لأن الصفحة الأم بها تمرير
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     currentProducts.forEach { product ->
-                        ProductCard(
+                        SimpleProductCard(
                             product = product,
-                            onAddToCart = { cartViewModel.addToCart(product) }
+                            onClick = { navController.navigate(Screen.ProductDetail.passId(product.id)) }
                         )
                     }
                 }
@@ -297,8 +301,7 @@ fun HomeScreen(
                     fontSize = 14.sp
                 )
             }
-
-            Spacer(modifier = Modifier.height(16.dp)) // مسافة صغيرة قبل نهاية المحتوى
+            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }

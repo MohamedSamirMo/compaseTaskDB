@@ -2,9 +2,11 @@ package com.task.compasetask.presentation.nav
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.task.compasetask.presentation.screens.*
 
 sealed class Screen(val route: String) {
@@ -13,8 +15,11 @@ sealed class Screen(val route: String) {
     object Home : Screen("home")
     object Cart : Screen("cart")
     object Orders : Screen("orders")
-    object Menu : Screen("menu")      // ✅ جديد
-    object Profile : Screen("profile") // ✅ جديد
+    object Menu : Screen("menu")
+    object Profile : Screen("profile")
+    object ProductDetail : Screen("product_detail/{productId}") {
+        fun passId(productId: Int): String = "product_detail/$productId"
+    }
 }
 
 @Composable
@@ -45,6 +50,13 @@ fun AppNavigation(modifier: Modifier = Modifier) {
         }
         composable(Screen.Profile.route) {
             ProfileScreen(navController)
+        }
+        composable(
+            route = Screen.ProductDetail.route,
+            arguments = listOf(navArgument("productId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val productId = backStackEntry.arguments?.getInt("productId") ?: return@composable
+            ProductDetailScreen(navController, productId)
         }
     }
 }
