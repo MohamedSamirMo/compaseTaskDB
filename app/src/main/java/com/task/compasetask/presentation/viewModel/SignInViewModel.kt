@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.util.regex.Pattern
 import javax.inject.Inject
 
 data class SignInUiState(
@@ -52,16 +53,34 @@ class SignInViewModel @Inject constructor() : ViewModel() {
     private fun performSignIn() {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
-            val email = _uiState.value.email
+            val email = _uiState.value.email.trim()
             val password = _uiState.value.password
-            if (email.isNotBlank() && password.length >= 4) {
-                _uiState.value = _uiState.value.copy(isLoading = false, isSignInSuccess = true)
-            } else {
+
+            if (email.isBlank() || !isValidEmail(email)) {
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
-                    errorMessage = "Invalid email or password (min 4 chars)"
+                    errorMessage = "Please enter a valid email address (e.g., name@example.com)"
                 )
+                return@launch
             }
+
+            if (password.length < 4) {
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    errorMessage = "Password must be at least 4 characters"
+                )
+                return@launch
+            }
+
+            _uiState.value = _uiState.value.copy(isLoading = false, isSignInSuccess = true)
         }
+    }
+
+    private fun isValidEmail(email: String): Boolean {
+        val emailRegex = Pattern.compile(
+            "^[A-Za-z0-9+_.-]+@(.+)$",
+            Pattern.CASE_INSENSITIVE
+        )
+        return emailRegex.matcher(email).matches()
     }
 }

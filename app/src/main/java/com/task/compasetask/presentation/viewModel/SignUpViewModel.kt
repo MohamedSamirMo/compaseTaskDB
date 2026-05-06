@@ -1,6 +1,5 @@
 package com.task.compasetask.presentation.viewModel
 
-
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -11,7 +10,6 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class SignUpUiState(
-    val username: String = "",
     val email: String = "",
     val password: String = "",
     val confirmPassword: String = "",
@@ -21,7 +19,6 @@ data class SignUpUiState(
 )
 
 sealed class SignUpEvent {
-    data class UsernameChanged(val username: String) : SignUpEvent()
     data class EmailChanged(val email: String) : SignUpEvent()
     data class PasswordChanged(val password: String) : SignUpEvent()
     data class ConfirmPasswordChanged(val confirm: String) : SignUpEvent()
@@ -36,7 +33,6 @@ class SignUpViewModel @Inject constructor() : ViewModel() {
 
     fun onEvent(event: SignUpEvent) {
         when (event) {
-            is SignUpEvent.UsernameChanged -> _uiState.value = _uiState.value.copy(username = event.username)
             is SignUpEvent.EmailChanged -> _uiState.value = _uiState.value.copy(email = event.email)
             is SignUpEvent.PasswordChanged -> _uiState.value = _uiState.value.copy(password = event.password)
             is SignUpEvent.ConfirmPasswordChanged -> _uiState.value = _uiState.value.copy(confirmPassword = event.confirm)
@@ -49,18 +45,22 @@ class SignUpViewModel @Inject constructor() : ViewModel() {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
             val state = _uiState.value
-            if (state.username.isBlank() || state.email.isBlank() || state.password.isBlank()) {
-                _uiState.value = _uiState.value.copy(isLoading = false, errorMessage = "All fields required")
+
+            if (state.email.isBlank() || state.password.isBlank()) {
+                _uiState.value = _uiState.value.copy(isLoading = false, errorMessage = "Email and password are required")
                 return@launch
             }
+
             if (state.password != state.confirmPassword) {
                 _uiState.value = _uiState.value.copy(isLoading = false, errorMessage = "Passwords do not match")
                 return@launch
             }
+
             if (state.password.length < 4) {
-                _uiState.value = _uiState.value.copy(isLoading = false, errorMessage = "Password too short")
+                _uiState.value = _uiState.value.copy(isLoading = false, errorMessage = "Password too short (minimum 4 characters)")
                 return@launch
             }
+
             _uiState.value = _uiState.value.copy(isLoading = false, isSignUpSuccess = true)
         }
     }

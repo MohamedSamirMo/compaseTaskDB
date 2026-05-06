@@ -3,6 +3,7 @@ package com.task.compasetask.presentation.screens
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -58,8 +59,10 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.task.compasetask.R
 import com.task.compasetask.presentation.TabButton
 import com.task.compasetask.presentation.nav.Screen
+import com.task.compasetask.presentation.viewModel.AuthViewModel
 import com.task.compasetask.presentation.viewModel.SignUpEvent
 import com.task.compasetask.presentation.viewModel.SignUpViewModel
 
@@ -67,7 +70,8 @@ import com.task.compasetask.presentation.viewModel.SignUpViewModel
 @Composable
 fun SignUpScreen(
     navController: NavController,
-    viewModel: SignUpViewModel = hiltViewModel()
+    viewModel: SignUpViewModel = hiltViewModel(),
+    authViewModel: AuthViewModel = hiltViewModel()   // <-- إضافة AuthViewModel
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -81,14 +85,31 @@ fun SignUpScreen(
 
     LaunchedEffect(uiState.isSignUpSuccess) {
         if (uiState.isSignUpSuccess) {
+            // بعد نجاح التسجيل، ننتقل إلى شاشة تسجيل الدخول (لم يتم تسجيل دخول تلقائي)
             navController.navigate(Screen.SignIn.route) {
                 popUpTo(Screen.SignUp.route) { inclusive = true }
             }
         }
     }
 
+    // دوال مساعدة لتسجيل الدخول الوهمي عبر فيسبوك / جوجل
+    fun mockLoginWithFacebook() {
+        val mockEmail = "user@facebook.com"
+        authViewModel.login(mockEmail)
+        navController.navigate(Screen.Home.route) {
+            popUpTo(Screen.SignUp.route) { inclusive = true }
+        }
+    }
+
+    fun mockLoginWithGoogle() {
+        val mockEmail = "user@gmail.com"
+        authViewModel.login(mockEmail)
+        navController.navigate(Screen.Home.route) {
+            popUpTo(Screen.SignUp.route) { inclusive = true }
+        }
+    }
+
     Box(modifier = Modifier.fillMaxSize()) {
-        // خلفية متدرجة
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -99,20 +120,19 @@ fun SignUpScreen(
                 )
         )
 
-        // الصور العلوية
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(400.dp)
         ) {
             Image(
-                painter = painterResource(id = com.task.compasetask.R.drawable.ic_background_top),
+                painter = painterResource(id = R.drawable.ic_background_top),
                 contentDescription = null,
                 modifier = Modifier.matchParentSize(),
                 contentScale = ContentScale.Crop
             )
             Image(
-                painter = painterResource(id = com.task.compasetask.R.drawable.ic_mask_top),
+                painter = painterResource(id = R.drawable.ic_mask_top),
                 contentDescription = null,
                 modifier = Modifier.matchParentSize(),
                 contentScale = ContentScale.Fit
@@ -121,7 +141,7 @@ fun SignUpScreen(
 
         // الصورة السفلية
         Image(
-            painter = painterResource(id = com.task.compasetask.R.drawable.ic_background_bottom),
+            painter = painterResource(id = R.drawable.ic_background_bottom),
             contentDescription = null,
             modifier = Modifier
                 .size(150.dp)
@@ -129,7 +149,6 @@ fun SignUpScreen(
             contentScale = ContentScale.Fit
         )
 
-        // المحتوى الرئيسي
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -151,14 +170,13 @@ fun SignUpScreen(
                     .verticalScroll(rememberScrollState()),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // الشعار
+
                 Image(
-                    painter = painterResource(id = com.task.compasetask.R.drawable.ic_logo_dounts),
+                    painter = painterResource(id = R.drawable.ic_logo_dounts),
                     contentDescription = null,
                     modifier = Modifier.size(200.dp)
                 )
 
-                // الكارد الأبيض
                 Card(
                     shape = RoundedCornerShape(24.dp),
                     colors = CardDefaults.cardColors(containerColor = Color.White),
@@ -191,7 +209,6 @@ fun SignUpScreen(
                             )
                         }
 
-
                         var showPassword by remember { mutableStateOf(false) }
                         var showConfirmPassword by remember { mutableStateOf(false) }
 
@@ -220,7 +237,6 @@ fun SignUpScreen(
 
                         Spacer(modifier = Modifier.height(16.dp))
 
-                        // حقل كلمة المرور
                         CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
                             TextField(
                                 value = uiState.password,
@@ -229,7 +245,7 @@ fun SignUpScreen(
                                 trailingIcon = {
                                     IconButton(onClick = { showPassword = !showPassword }) {
                                         Icon(
-                                            painter = painterResource(id = com.task.compasetask.R.drawable.ic_view),
+                                            painter = painterResource(id = R.drawable.ic_view),
                                             contentDescription = if (showPassword) "Hide password" else "Show password"
                                         )
                                     }
@@ -255,7 +271,6 @@ fun SignUpScreen(
 
                         Spacer(modifier = Modifier.height(16.dp))
 
-                        // حقل تأكيد كلمة المرور
                         CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
                             TextField(
                                 value = uiState.confirmPassword,
@@ -264,7 +279,7 @@ fun SignUpScreen(
                                 trailingIcon = {
                                     IconButton(onClick = { showConfirmPassword = !showConfirmPassword }) {
                                         Icon(
-                                            painter = painterResource(id = com.task.compasetask.R.drawable.ic_view),
+                                            painter = painterResource(id = R.drawable.ic_view),
                                             contentDescription = if (showConfirmPassword) "Hide password" else "Show password"
                                         )
                                     }
@@ -290,12 +305,12 @@ fun SignUpScreen(
 
                         Spacer(modifier = Modifier.height(24.dp))
 
-                        // زر التسجيل
                         Button(
                             onClick = { viewModel.onEvent(SignUpEvent.SignUpClicked) },
                             modifier = Modifier.fillMaxWidth(),
                             shape = RoundedCornerShape(16.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF9666))
+                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF9666)),
+                            enabled = !uiState.isLoading
                         ) {
                             if (uiState.isLoading) {
                                 CircularProgressIndicator(
@@ -309,13 +324,12 @@ fun SignUpScreen(
 
                         Spacer(modifier = Modifier.height(16.dp))
 
-                        // فاصل "Or"
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Icon(
-                                painter = painterResource(id = com.task.compasetask.R.drawable.ic_line_left),
+                                painter = painterResource(id = R.drawable.ic_line_left),
                                 contentDescription = null,
                                 modifier = Modifier.weight(1f),
                                 tint = Color.Gray
@@ -327,7 +341,7 @@ fun SignUpScreen(
                                 modifier = Modifier.padding(horizontal = 8.dp)
                             )
                             Icon(
-                                painter = painterResource(id = com.task.compasetask.R.drawable.ic_line_right),
+                                painter = painterResource(id = R.drawable.ic_line_right),
                                 contentDescription = null,
                                 modifier = Modifier.weight(1f),
                                 tint = Color.Gray
@@ -336,7 +350,6 @@ fun SignUpScreen(
 
                         Spacer(modifier = Modifier.height(16.dp))
 
-                        // أزرار التواصل الاجتماعي (فيسبوك وجوجل)
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -345,23 +358,19 @@ fun SignUpScreen(
                             horizontalArrangement = Arrangement.Center,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            IconButton(
-                                onClick = { /* TODO: Facebook login */ }
-                            ) {
+                            IconButton(onClick = { mockLoginWithFacebook() }) {
                                 Icon(
-                                    painter = painterResource(id = com.task.compasetask.R.drawable.ic_facebook),
-                                    contentDescription = "Facebook",
+                                    painter = painterResource(id = R.drawable.ic_facebook),
+                                    contentDescription = "Facebook login",
                                     modifier = Modifier.size(40.dp),
                                     tint = Color.Unspecified
                                 )
                             }
                             Spacer(modifier = Modifier.width(2.dp))
-                            IconButton(
-                                onClick = { /* TODO: Google login */ }
-                            ) {
+                            IconButton(onClick = { mockLoginWithGoogle() }) {
                                 Icon(
-                                    painter = painterResource(id = com.task.compasetask.R.drawable.ic_google),
-                                    contentDescription = "Google",
+                                    painter = painterResource(id = R.drawable.ic_google),
+                                    contentDescription = "Google login",
                                     modifier = Modifier.size(40.dp),
                                     tint = Color.Unspecified
                                 )
@@ -373,6 +382,23 @@ fun SignUpScreen(
                 SnackbarHost(
                     hostState = snackbarHostState,
                     modifier = Modifier.padding(8.dp)
+                )
+            }
+        }
+
+        if (uiState.isLoading) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.4f))
+                    .clickable(enabled = false) { }
+            ) {
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .size(60.dp)
+                        .align(Alignment.Center),
+                    color = Color(0xFFFF9666),
+                    strokeWidth = 4.dp
                 )
             }
         }

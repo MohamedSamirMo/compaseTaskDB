@@ -1,5 +1,6 @@
 package com.task.compasetask.presentation.screens
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -11,7 +12,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -31,18 +36,26 @@ fun CartScreen(
     val cartItemCount by viewModel.cartItemCount.collectAsState()
 
     Scaffold(
+        containerColor = Color(0xFFFFF6F2),
         topBar = {
-            TopAppBar(
-                title = { Text("My Cart") },
-                navigationIcon = {
-                    IconButton(onClick = { navController.navigateUp() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+            CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+                TopAppBar(
+                    title = {Text("My Cart"
+                        , textAlign = TextAlign.Center,)},
+                    navigationIcon = {
+                        IconButton(onClick = { navController.navigateUp() }) {
+                            Image(
+                                painter = painterResource(id = com.task.compasetask.R.drawable.ic_back),
+                                contentDescription = "Back",
+                                modifier = Modifier.size(34.dp)
+                            )
+                        }
                     }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color(0xFFFFF5E1))
-            )
+                    ,
+                    colors = TopAppBarDefaults.topAppBarColors(containerColor = Color(0xFFFFF5E1))
+                )
+            }
         },
-        containerColor = Color(0xFFFFF6F2), // نفس خلفية HomeScreen
         bottomBar = {
             NavigationBar(
                 containerColor = Color.White,
@@ -58,7 +71,7 @@ fun CartScreen(
                     selected = false,
                     onClick = { navController.navigate(Screen.Orders.route) },
                     icon = { Icon(Icons.Default.Menu, contentDescription = "Menu") },
-                    label = { Text("Menu") }
+                    label = { Text("Orders") }
                 )
                 NavigationBarItem(
                     selected = true,
@@ -92,7 +105,7 @@ fun CartScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(horizontal = 16.dp) // إضافة padding أفقي مماثل لـ HomeScreen
+                .padding(horizontal = 16.dp)
         ) {
             if (cartItems.isEmpty()) {
                 Box(
@@ -102,14 +115,14 @@ fun CartScreen(
                     Text(
                         text = "Your cart is empty",
                         style = MaterialTheme.typography.titleMedium,
-                        color = Color(0xFF174C4F) // نفس لون النص الداكن في HomeScreen
+                        color = Color(0xFF174C4F)
                     )
                 }
             } else {
                 LazyColumn(
                     modifier = Modifier.weight(1f),
-                    contentPadding = PaddingValues(vertical = 16.dp), // مسافات رأسية متسقة
-                    verticalArrangement = Arrangement.spacedBy(12.dp) // نفس تباعد البطاقات
+                    contentPadding = PaddingValues(vertical = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     items(cartItems) { cartItem ->
                         CartItemRow(
@@ -123,7 +136,6 @@ fun CartScreen(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // بطاقة إجمالي السعر (مشابهة لـ SimpleProductCard ولكن للتوتال)
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     shape = MaterialTheme.shapes.medium,

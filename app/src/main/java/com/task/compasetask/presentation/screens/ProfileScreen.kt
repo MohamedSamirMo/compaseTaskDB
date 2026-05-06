@@ -14,6 +14,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -21,21 +22,27 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.task.compasetask.presentation.nav.Screen
+import com.task.compasetask.presentation.viewModel.AuthViewModel
 import com.task.compasetask.presentation.viewModel.CartViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(
     navController: NavController,
+    authViewModel: AuthViewModel = hiltViewModel(),
     cartViewModel: CartViewModel = hiltViewModel()
 ) {
+    val authState by authViewModel.uiState.collectAsState()
     val cartItemCount by cartViewModel.cartItemCount.collectAsState()
+
+    val userEmail = authState.userEmail ?: "guest@example.com"
+    val userName = userEmail.substringBefore("@").ifEmpty { "User" }
 
     Scaffold(
         containerColor = Color(0xFFFFF6F2),
         bottomBar = {
             NavigationBar(
-                containerColor = Color(0xFFFFFFFF),
+                containerColor = Color.White,
                 tonalElevation = 0.dp
             ) {
                 NavigationBarItem(
@@ -47,8 +54,8 @@ fun ProfileScreen(
                 NavigationBarItem(
                     selected = false,
                     onClick = { navController.navigate(Screen.Orders.route) },
-                    icon = { Icon(Icons.Default.Menu, contentDescription = "Menu") },
-                    label = { Text("Menu") }
+                    icon = { Icon(Icons.Default.Menu, contentDescription = "Orders") },
+                    label = { Text("Orders") }
                 )
                 NavigationBarItem(
                     selected = false,
@@ -58,7 +65,7 @@ fun ProfileScreen(
                             badge = {
                                 if (cartItemCount > 0) {
                                     Badge(
-                                        containerColor = Color(0xFF795548),
+                                        containerColor = Color(0xFFFF9666),
                                         contentColor = Color.White
                                     ) { Text(cartItemCount.toString()) }
                                 }
@@ -71,7 +78,7 @@ fun ProfileScreen(
                 )
                 NavigationBarItem(
                     selected = true,
-                    onClick = {  },
+                    onClick = { },
                     icon = { Icon(Icons.Default.Person, contentDescription = "Profile") },
                     label = { Text("Profile") }
                 )
@@ -83,22 +90,25 @@ fun ProfileScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
                 .verticalScroll(rememberScrollState())
-                .padding(16.dp),
+                .padding(horizontal = 16.dp)
+                .padding(top = 20.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(20.dp))
-
             Box(
                 modifier = Modifier
-                    .size(100.dp)
+                    .size(110.dp)
                     .clip(CircleShape)
-                    .background(Color(0xFFF5E6D3)),
+                    .background(
+                        Brush.linearGradient(
+                            colors = listOf(Color(0xFFFF9666), Color(0xFFFFB38C))
+                        )
+                    ),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     Icons.Default.Person,
                     contentDescription = "Profile Picture",
-                    tint = Color(0xFF795548),
+                    tint = Color.White,
                     modifier = Modifier.size(60.dp)
                 )
             }
@@ -106,15 +116,17 @@ fun ProfileScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = "John Doe",
-                fontSize = 24.sp,
+                text = userName,
+                fontSize = 26.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color(0xFF4A3728)
             )
 
+            Spacer(modifier = Modifier.height(4.dp))
+
             Text(
-                text = "john.doe@example.com",
-                fontSize = 14.sp,
+                text = userEmail,
+                fontSize = 15.sp,
                 color = Color(0xFF795548)
             )
 
@@ -122,64 +134,101 @@ fun ProfileScreen(
 
             Card(
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFFFFE0B2))
+                shape = RoundedCornerShape(20.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                elevation = CardDefaults.cardElevation(4.dp)
             ) {
-                Column(
-                    modifier = Modifier.padding(16.dp)
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Spacer(modifier = Modifier.width(12.dp))
-                        Text(
-                            text = "Order History",
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Medium,
-                            color = Color(0xFF4A3728)
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(12.dp))
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Spacer(modifier = Modifier.width(12.dp))
-                        Text(
-                            text = "Saved Addresses",
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Medium,
-                            color = Color(0xFF4A3728)
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(12.dp))
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Spacer(modifier = Modifier.width(12.dp))
-                        Text(
-                            text = "Settings",
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Medium,
-                            color = Color(0xFF4A3728)
-                        )
-                    }
+                Column(modifier = Modifier.padding(vertical = 8.dp)) {
+                    ProfileMenuItem(
+                        icon = Icons.Default.DateRange,
+                        title = "Order History",
+                        onClick = { /* TODO: navigate to order history */ }
+                    )
+                    Divider(
+                        color = Color(0xFFE0E0E0),
+                        thickness = 0.5.dp,
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+                    ProfileMenuItem(
+                        icon = Icons.Default.LocationOn,
+                        title = "Saved Addresses",
+                        onClick = { /* TODO: navigate to saved addresses */ }
+                    )
+                    Divider(
+                        color = Color(0xFFE0E0E0),
+                        thickness = 0.5.dp,
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+                    ProfileMenuItem(
+                        icon = Icons.Default.Settings,
+                        title = "Settings",
+                        onClick = { /* TODO: navigate to settings */ }
+                    )
                 }
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(32.dp))
 
             Button(
-                onClick = { navController.navigate(Screen.SignIn.route) },
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF8C42)),
-                shape = RoundedCornerShape(12.dp)
+                onClick = {
+                    authViewModel.logout()
+                    navController.navigate(Screen.SignIn.route) {
+                        popUpTo(Screen.Home.route) { inclusive = true }
+                    }
+                },
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF9666)),
+                shape = RoundedCornerShape(30.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp)
             ) {
-                Text("Sign Out", color = Color.White)
+                Icon(
+                    Icons.Default.ExitToApp,
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp),
+                    tint = Color.White
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text("Sign Out", color = Color.White, fontSize = 16.sp)
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(24.dp))
         }
+    }
+}
+
+@Composable
+fun ProfileMenuItem(
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    title: String,
+    onClick: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() }
+            .padding(horizontal = 20.dp, vertical = 16.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = title,
+            tint = Color(0xFFFF9666),
+            modifier = Modifier.size(24.dp)
+        )
+        Spacer(modifier = Modifier.width(16.dp))
+        Text(
+            text = title,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Medium,
+            color = Color(0xFF4A3728)
+        )
+        Spacer(modifier = Modifier.weight(1f))
+        Icon(
+            imageVector = Icons.Default.PlayArrow,
+            contentDescription = null,
+            tint = Color.Gray,
+            modifier = Modifier.size(20.dp)
+        )
     }
 }

@@ -69,7 +69,7 @@ fun OrdersScreen(
                     selected = true,
                     onClick = { /* already here */ },
                     icon = { Icon(Icons.Default.Menu, contentDescription = "Menu") },
-                    label = { Text("Menu") }
+                    label = { Text("Orders") }
                 )
                 NavigationBarItem(
                     selected = false,

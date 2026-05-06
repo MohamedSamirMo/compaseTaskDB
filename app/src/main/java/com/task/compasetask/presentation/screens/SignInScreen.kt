@@ -3,10 +3,10 @@ package com.task.compasetask.presentation.screens
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -31,6 +31,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -58,8 +59,10 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.task.compasetask.R
 import com.task.compasetask.presentation.TabButton
 import com.task.compasetask.presentation.nav.Screen
+import com.task.compasetask.presentation.viewModel.AuthViewModel
 import com.task.compasetask.presentation.viewModel.SignInEvent
 import com.task.compasetask.presentation.viewModel.SignInViewModel
 
@@ -67,7 +70,8 @@ import com.task.compasetask.presentation.viewModel.SignInViewModel
 @Composable
 fun SignInScreen(
     navController: NavController,
-    viewModel: SignInViewModel = hiltViewModel()
+    viewModel: SignInViewModel = hiltViewModel(),
+    authViewModel: AuthViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -81,12 +85,28 @@ fun SignInScreen(
 
     LaunchedEffect(uiState.isSignInSuccess) {
         if (uiState.isSignInSuccess) {
+            authViewModel.login(uiState.email)
             navController.navigate(Screen.Home.route) {
                 popUpTo(Screen.SignIn.route) { inclusive = true }
             }
         }
     }
 
+    fun mockLoginWithFacebook() {
+        val mockEmail = "user@facebook.com"
+        authViewModel.login(mockEmail)
+        navController.navigate(Screen.Home.route) {
+            popUpTo(Screen.SignIn.route) { inclusive = true }
+        }
+    }
+
+    fun mockLoginWithGoogle() {
+        val mockEmail = "user@gmail.com"
+        authViewModel.login(mockEmail)
+        navController.navigate(Screen.Home.route) {
+            popUpTo(Screen.SignIn.route) { inclusive = true }
+        }
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         Box(
@@ -105,13 +125,13 @@ fun SignInScreen(
                 .height(400.dp)
         ) {
             Image(
-                painter = painterResource(id = com.task.compasetask.R.drawable.ic_background_top),
+                painter = painterResource(id = R.drawable.ic_background_top),
                 contentDescription = null,
                 modifier = Modifier.matchParentSize(),
                 contentScale = ContentScale.Crop
             )
             Image(
-                painter = painterResource(id = com.task.compasetask.R.drawable.ic_mask_top),
+                painter = painterResource(id = R.drawable.ic_mask_top),
                 contentDescription = null,
                 modifier = Modifier.matchParentSize(),
                 contentScale = ContentScale.Fit
@@ -119,7 +139,7 @@ fun SignInScreen(
         }
 
         Image(
-            painter = painterResource(id = com.task.compasetask.R.drawable.ic_background_bottom),
+            painter = painterResource(id = R.drawable.ic_background_bottom),
             contentDescription = null,
             modifier = Modifier
                 .size(150.dp)
@@ -130,70 +150,33 @@ fun SignInScreen(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .windowInsetsPadding(
-                    WindowInsets(
-                        top = 16.dp,
-                        bottom = 16.dp
-                    )
-                )
+                .windowInsetsPadding(WindowInsets(top = 16.dp, bottom = 16.dp))
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(
-                        top = 16.dp,
-                        start = 16.dp,
-                        end = 16.dp
-
-                    )
+                    .padding(top = 16.dp, start = 16.dp, end = 16.dp)
                     .verticalScroll(rememberScrollState()),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Image(
-                    painter = painterResource(id = com.task.compasetask.R.drawable.ic_logo_dounts),
+                    painter = painterResource(id = R.drawable.ic_logo_dounts),
                     contentDescription = null,
                     modifier = Modifier.size(200.dp)
                 )
 
                 Card(
                     shape = RoundedCornerShape(24.dp),
-
                     colors = CardDefaults.cardColors(containerColor = Color.White),
                     elevation = CardDefaults.cardElevation(8.dp),
-                    modifier = Modifier.fillMaxWidth()
-                        .align(
-                            Alignment.CenterHorizontally
-                        )
+                    modifier = Modifier.fillMaxWidth().align(Alignment.CenterHorizontally)
                 ) {
-
                     Column(modifier = Modifier.padding(20.dp)) {
-//                        Row(
-//                            modifier = Modifier
-//                                .wrapContentWidth()
-//                                .border(
-//                                    width = 1.dp,
-//                                    color = Color(0xFFA8A7A780),
-//                                    shape = RoundedCornerShape(50.dp)
-//                                ),
-//                            horizontalArrangement = Arrangement.Center
-//                        ) {
-//                            TabButton(
-//                                text = "Sign In",
-//                                isSelected = true,
-//                                onClick = { /* بالفعل في تسجيل الدخول */ }
-//                            )
-//                            Spacer(modifier = Modifier.width(5.dp))
-//                            TabButton(
-//                                text = "Sign Up",
-//                                isSelected = false,
-//                                onClick = { navController.navigate(Screen.SignUp.route) }
-//                            )
-//                        }
                         Row(
                             modifier = Modifier
                                 .wrapContentWidth()
                                 .height(40.dp)
-                                .align(Alignment.CenterHorizontally)  // ← التوسيط
+                                .align(Alignment.CenterHorizontally)
                                 .border(
                                     width = 1.dp,
                                     color = Color(0xFFA8A7A780),
@@ -204,7 +187,7 @@ fun SignInScreen(
                             TabButton(
                                 text = "Sign In",
                                 isSelected = true,
-                                onClick = {  }
+                                onClick = { }
                             )
                             Spacer(modifier = Modifier.width(5.dp))
                             TabButton(
@@ -215,14 +198,13 @@ fun SignInScreen(
                         }
 
                         var showPassword by remember { mutableStateOf(false) }
-                        CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
 
+                        CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
                             TextField(
                                 value = uiState.email,
                                 onValueChange = { viewModel.onEvent(SignInEvent.EmailChanged(it)) },
                                 label = { Text("Email") },
-                                modifier = Modifier
-                                    .fillMaxWidth(),
+                                modifier = Modifier.fillMaxWidth(),
                                 singleLine = true,
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                                 enabled = !uiState.isLoading,
@@ -240,8 +222,8 @@ fun SignInScreen(
                             )
                         }
                         Spacer(modifier = Modifier.height(16.dp))
-                        CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
 
+                        CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
                             TextField(
                                 value = uiState.password,
                                 onValueChange = { viewModel.onEvent(SignInEvent.PasswordChanged(it)) },
@@ -249,14 +231,14 @@ fun SignInScreen(
                                 trailingIcon = {
                                     IconButton(onClick = { showPassword = !showPassword }) {
                                         Icon(
-                                            painter = painterResource(id = com.task.compasetask.R.drawable.ic_view),
+                                            painter = painterResource(id = R.drawable.ic_view),
                                             contentDescription = if (showPassword) "Hide password" else "Show password"
                                         )
                                     }
                                 },
-                                modifier = Modifier
-                                    .fillMaxWidth(), singleLine = true,
-                                visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(), // 3️⃣ إظهار/إخفاء
+                                modifier = Modifier.fillMaxWidth(),
+                                singleLine = true,
+                                visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                                 enabled = !uiState.isLoading,
                                 colors = TextFieldDefaults.colors(
@@ -288,26 +270,23 @@ fun SignInScreen(
                             onClick = { viewModel.onEvent(SignInEvent.SignInClicked) },
                             modifier = Modifier.fillMaxWidth(),
                             shape = RoundedCornerShape(16.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF9666))
+                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF9666)),
+                            enabled = !uiState.isLoading
                         ) {
                             if (uiState.isLoading) {
-                                CircularProgressIndicator(
-                                    modifier = Modifier.size(20.dp),
-                                    color = Color.White
-                                )
+                                CircularProgressIndicator(modifier = Modifier.size(20.dp), color = Color.White)
                                 Spacer(modifier = Modifier.width(8.dp))
                             }
                             Text("Sign In", color = Color.White)
                         }
                     }
 
-
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
-                            painter = painterResource(id = com.task.compasetask.R.drawable.ic_line_left),
+                            painter = painterResource(id = R.drawable.ic_line_left),
                             contentDescription = null,
                             modifier = Modifier.weight(1f),
                             tint = Color.Gray
@@ -319,7 +298,7 @@ fun SignInScreen(
                             modifier = Modifier.padding(horizontal = 8.dp)
                         )
                         Icon(
-                            painter = painterResource(id = com.task.compasetask.R.drawable.ic_line_right),
+                            painter = painterResource(id = R.drawable.ic_line_right),
                             contentDescription = null,
                             modifier = Modifier.weight(1f),
                             tint = Color.Gray
@@ -336,30 +315,42 @@ fun SignInScreen(
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        IconButton(
-                            onClick = { /* TODO: Facebook login */ }
-                        ) {
+                        IconButton(onClick = { mockLoginWithFacebook() }) {
                             Icon(
-                                painter = painterResource(id = com.task.compasetask.R.drawable.ic_facebook),
-                                contentDescription = "Facebook",
+                                painter = painterResource(id = R.drawable.ic_facebook),
+                                contentDescription = "Facebook login",
                                 modifier = Modifier.size(40.dp),
                                 tint = Color.Unspecified
                             )
                         }
                         Spacer(modifier = Modifier.width(2.dp))
-                        IconButton(
-                            onClick = { /* TODO: Google login */ }
-                        ) {
+                        IconButton(onClick = { mockLoginWithGoogle() }) {
                             Icon(
-                                painter = painterResource(id = com.task.compasetask.R.drawable.ic_google),
-                                contentDescription = "Google",
+                                painter = painterResource(id = R.drawable.ic_google),
+                                contentDescription = "Google login",
                                 modifier = Modifier.size(40.dp),
                                 tint = Color.Unspecified
                             )
                         }
-
                     }
                 }
+
+                SnackbarHost(hostState = snackbarHostState, modifier = Modifier.padding(8.dp))
+            }
+        }
+
+        if (uiState.isLoading) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.4f))
+                    .clickable(enabled = false) { }
+            ) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(60.dp).align(Alignment.Center),
+                    color = Color(0xFFFF9666),
+                    strokeWidth = 4.dp
+                )
             }
         }
     }

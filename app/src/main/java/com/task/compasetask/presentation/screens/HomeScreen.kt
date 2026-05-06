@@ -74,7 +74,7 @@ fun HomeScreen(
                     selected = false,
                     onClick = { navController.navigate(Screen.Orders.route) },
                     icon = { Icon(Icons.Default.Menu, contentDescription = "Menu") },
-                    label = { Text("Menu") }
+                    label = { Text("Orders") }
                 )
                 NavigationBarItem(
                     selected = false,
