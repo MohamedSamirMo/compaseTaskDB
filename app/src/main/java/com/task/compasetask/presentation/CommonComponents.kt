@@ -1,26 +1,46 @@
 package com.task.compasetask.presentation
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.*
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Divider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.task.compasetask.data.models.CartItem
 import com.task.compasetask.data.models.Order
 import com.task.compasetask.data.models.Product
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
 
 @Composable
 fun TabButton(text: String, isSelected: Boolean, onClick: () -> Unit) {
@@ -37,52 +57,16 @@ fun TabButton(text: String, isSelected: Boolean, onClick: () -> Unit) {
         Text(text, fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal)
     }
 }
-//fun TabButton(text: String, isSelected: Boolean, onClick: () -> Unit) {
-//    Button(
-//        onClick = onClick,
-//        colors = ButtonDefaults.buttonColors(
-//            containerColor = if (isSelected) Color(0xFFFF9666) else Color.Transparent,
-//            contentColor = if (isSelected) Color.White else Color(0xFFFF9666)
-//        ),
-//        shape = RoundedCornerShape(32.dp),
-//        elevation = if (isSelected) ButtonDefaults.buttonElevation(4.dp) else ButtonDefaults.buttonElevation(0.dp)
-//    ) {
-//        Text(text, fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal)
-//    }
-//}
-//fun TabButton(
-//    text: String,
-//    isSelected: Boolean,
-//    onClick: () -> Unit,
-//    borderColor: Color = Color.White
-//) {
-//    Button(
-//        onClick = onClick,
-//        modifier = Modifier.border(
-//            width = 1.dp,
-//            color = borderColor,
-//            shape = RoundedCornerShape(26.dp)
-//        ),
-//        colors = ButtonDefaults.buttonColors(
-//            containerColor = if (isSelected) Color(0xFFFF9666) else Color.Transparent,
-//            contentColor = if (isSelected) Color.White else Color(0xFFFFFFFF)
-//        ),
-//        shape = RoundedCornerShape(26.dp),
-//        elevation = if (isSelected) ButtonDefaults.buttonElevation(4.dp) else ButtonDefaults.buttonElevation(0.dp)
-//    ) {
-//        Text(text, fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal)
-//    }
-//}
 @Composable
 fun ProductCard(
     product: Product,
     onAddToCart: () -> Unit,
     onClick: () -> Unit,
-    isFeatured: Boolean = false   // نمط البطاقة: مميزة أو عادية
+    isFeatured: Boolean = false
 ) {
     Card(
-        shape = RoundedCornerShape(if (isFeatured) 20.dp else 16.dp),
-        elevation = CardDefaults.cardElevation(if (isFeatured) 8.dp else 4.dp),
+        shape = RoundedCornerShape(if (isFeatured) 20.dp else 20.dp),
+        elevation = CardDefaults.cardElevation(if (isFeatured) 8.dp else 8.dp),
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onClick() },
@@ -92,54 +76,34 @@ fun ProductCard(
     ) {
         Column(
             modifier = Modifier
-                .padding(if (isFeatured) 16.dp else 12.dp)
+                .padding(if (isFeatured) 16.dp else 16.dp)
                 .fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // الصورة - حجم أكبر للمميزة
             Image(
                 painter = painterResource(product.imageRes),
                 contentDescription = product.name,
-                modifier = Modifier.size(if (isFeatured) 110.dp else 80.dp)
+                modifier = Modifier.size(if (isFeatured) 150.dp else 150.dp)
             )
-            Spacer(modifier = Modifier.height(if (isFeatured) 12.dp else 8.dp))
+            Spacer(modifier = Modifier.height(if (isFeatured) 12.dp else 12.dp))
 
-            // الاسم - خط عريض وحجم أكبر للمميزة
             Text(
                 product.name,
-                fontWeight = FontWeight.Bold,
-                fontSize = if (isFeatured) 18.sp else 14.sp
+                fontWeight = FontWeight.SemiBold,
+                color= Color(0xFF174C4F),
+                fontSize = if (isFeatured) 18.sp else 18.sp,
+                textAlign = TextAlign.Center
             )
 
-            // السعر - لون مختلف للمميزة
+            Spacer(modifier = Modifier.height(4.dp))
+
             Text(
                 "$${product.price}",
-                color = if (isFeatured) Color(0xFFE67E22) else Color.Gray,
-                fontSize = if (isFeatured) 16.sp else 14.sp,
-                fontWeight = if (isFeatured) FontWeight.SemiBold else FontWeight.Normal
+                color =  Color(0xFF174C4F),
+                fontSize = if (isFeatured) 16.sp else 16.sp,
+                fontWeight =  FontWeight.Medium,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.End
             )
-            Spacer(modifier = Modifier.height(if (isFeatured) 12.dp else 8.dp))
-
-            // الزر - لون مختلف وشكل مختلف للمميزة
-            Button(
-                onClick = onAddToCart,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = if (isFeatured) Color(0xFFE67E22) else Color(0xFF795548)
-                ),
-                shape = RoundedCornerShape(if (isFeatured) 24.dp else 12.dp),
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Icon(
-                    Icons.Default.Add,
-                    contentDescription = null,
-                    modifier = Modifier.size(18.dp)
-                )
-                Spacer(modifier = Modifier.width(4.dp))
-                Text(
-                    if (isFeatured) "Order Now" else "Add to Cart",
-                    fontSize = MaterialTheme.typography.labelLarge.fontSize
-                )
-            }
         }
     }
 }
@@ -152,92 +116,100 @@ fun SimpleProductCard(
         modifier = Modifier
             .wrapContentWidth()
             .clickable { onClick() },
-        verticalAlignment = Alignment.Top   // محاذاة العناصر إلى الأعلى (top)
+        verticalAlignment = Alignment.Top
     ) {
-        // الصورة على اليسار
         Image(
             painter = painterResource(product.imageRes),
             contentDescription = product.name,
             modifier = Modifier.size(48.dp)
         )
         Spacer(modifier = Modifier.width(8.dp))
-        // النص على اليمين (في البداية / إلى أقصى اليسار بعد الصورة)
         Text(
             product.name,
             fontWeight = FontWeight.Medium,
+            color = Color(0xFF174C4F),
             fontSize = 14.sp
         )
     }
 }
-//@Composable
-//fun ProductCard(
-//    product: Product,
-//    onAddToCart: () -> Unit,
-//    onClick: () -> Unit   // إضافة معامل جديد للنقر على البطاقة
-//) {
-//    Card(
-//        shape = RoundedCornerShape(16.dp),
-//        elevation = CardDefaults.cardElevation(4.dp),
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .clickable { onClick() }   // جعل البطاقة قابلة للنقر
-//    ) {
-//        Column(
-//            modifier = Modifier
-//                .padding(12.dp)
-//                .fillMaxWidth(),
-//            horizontalAlignment = Alignment.CenterHorizontally
-//        ) {
-//            Image(
-//                painter = painterResource(product.imageRes),
-//                contentDescription = product.name,
-//                modifier = Modifier.size(80.dp)
-//            )
-//            Spacer(modifier = Modifier.height(8.dp))
-//            Text(product.name, fontWeight = FontWeight.Bold)
-//            Text("$${product.price}", color = Color.Gray)
-//            Spacer(modifier = Modifier.height(8.dp))
-//            Button(
-//                onClick = onAddToCart,
-//                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF795548)),
-//                shape = RoundedCornerShape(12.dp),
-//                modifier = Modifier.fillMaxWidth()
-//            ) {
-//                Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(18.dp))
-//                Spacer(modifier = Modifier.width(4.dp))
-//                Text("Add to Cart", fontSize = MaterialTheme.typography.labelLarge.fontSize)
-//            }
-//        }
-//    }
-//}
+
 @Composable
-fun CartItemRow(item: CartItem, onIncrease: () -> Unit, onDecrease: () -> Unit, onRemove: () -> Unit) {
+fun CartItemRow(
+    item: CartItem,
+    onIncrease: () -> Unit,
+    onDecrease: () -> Unit,
+    onRemove: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     Card(
-        shape = RoundedCornerShape(12.dp),
-        modifier = Modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Row(
             modifier = Modifier
-                .padding(12.dp)
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .padding(12.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text(item.product.name, fontWeight = FontWeight.Bold)
-                Text("$${item.product.price}")
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                Text(
+                    text = item.product.name,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF174C4F),
+                    fontSize = 16.sp
+                )
+                Text(
+                    text = "$${String.format("%.2f", item.product.price)}",
+                    color = Color(0xFF795548),
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 14.sp
+                )
             }
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                IconButton(onClick = onDecrease) {
-                    Text("-", fontSize = MaterialTheme.typography.titleLarge.fontSize)
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                IconButton(
+                    onClick = onDecrease,
+                    modifier = Modifier.size(32.dp)
+                ) {
+                    Icon(
+                        Icons.Default.Close,
+                        contentDescription = "Decrease",
+                        tint = Color(0xFF795548)
+                    )
                 }
-                Text(item.quantity.toString(), modifier = Modifier.padding(horizontal = 8.dp))
-                IconButton(onClick = onIncrease) {
-                    Text("+", fontSize = MaterialTheme.typography.titleLarge.fontSize)
+                Text(
+                    text = item.quantity.toString(),
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF174C4F)
+                )
+                IconButton(
+                    onClick = onIncrease,
+                    modifier = Modifier.size(32.dp)
+                ) {
+                    Icon(
+                        Icons.Default.Add,
+                        contentDescription = "Increase",
+                        tint = Color(0xFF795548)
+                    )
                 }
-                Spacer(modifier = Modifier.width(8.dp))
-                TextButton(onClick = onRemove) {
-                    Text("Remove", color = Color.Red)
+                IconButton(
+                    onClick = onRemove,
+                    modifier = Modifier.size(32.dp)
+                ) {
+                    Icon(
+                        Icons.Default.Delete,
+                        contentDescription = "Remove",
+                        tint = Color(0xFFD32F2F)
+                    )
                 }
             }
         }
@@ -245,40 +217,89 @@ fun CartItemRow(item: CartItem, onIncrease: () -> Unit, onDecrease: () -> Unit, 
 }
 
 @Composable
-fun OrderItemCard(order: Order) {
+fun OrderItemCard(
+    order: Order,
+    modifier: Modifier = Modifier
+) {
+    val dateFormat = SimpleDateFormat("dd MMM yyyy, hh:mm a", Locale.getDefault())
+    val formattedDate = dateFormat.format(Date(order.timestamp))
+
     Card(
-        shape = RoundedCornerShape(12.dp),
-        modifier = Modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
-        Column(modifier = Modifier.padding(12.dp)) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text("Order #${order.id.takeLast(6)}", fontWeight = FontWeight.Bold)
                 Text(
-                    SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).format(Date(order.timestamp)),
+                    text = "Order #${order.id.take(8)}",
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF174C4F),
+                    fontSize = 16.sp
+                )
+                Text(
+                    text = formattedDate,
                     color = Color.Gray,
-                    fontSize = MaterialTheme.typography.bodySmall.fontSize
+                    fontSize = 12.sp
                 )
             }
-            Spacer(modifier = Modifier.height(8.dp))
-            order.items.forEach { item ->
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text("${item.quantity}x ${item.product.name}")
-                    Text("$${item.product.price * item.quantity}")
+
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                order.items.forEach { item ->
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(
+                            text = "${item.product.name} × ${item.quantity}",
+                            color = Color(0xFF4A3728),
+                            fontSize = 14.sp
+                        )
+                        Text(
+                            text = "$${String.format("%.2f", item.product.price * item.quantity)}",
+                            color = Color(0xFF795548),
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
                 }
             }
-            Divider(modifier = Modifier.padding(vertical = 8.dp))
+
+            Divider(thickness = 0.5.dp, color = Color(0xFFFFF0E6))
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text("Total", fontWeight = FontWeight.Bold)
-                Text("$${order.totalPrice}", fontWeight = FontWeight.Bold, color = Color(0xFF795548))
+                Text(
+                    text = "Total",
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF174C4F)
+                )
+                Text(
+                    text = "$${String.format("%.2f", order.totalPrice)}",
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF795548)
+                )
+            }
+
+            Surface(
+                shape = RoundedCornerShape(20.dp),
+                color = Color(0xFFE8F5E9),
+                modifier = Modifier.align(Alignment.End)
+            ) {
+                Text(
+                    text = "Completed",
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
+                    fontSize = 12.sp,
+                    color = Color(0xFF2E7D32)
+                )
             }
         }
     }

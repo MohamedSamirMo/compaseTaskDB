@@ -1,5 +1,6 @@
 package com.task.compasetask.presentation.screens
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
@@ -15,7 +16,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -68,7 +72,7 @@ fun HomeScreen(
                 )
                 NavigationBarItem(
                     selected = false,
-                    onClick = { navController.navigate(Screen.Menu.route) },
+                    onClick = { navController.navigate(Screen.Orders.route) },
                     icon = { Icon(Icons.Default.Menu, contentDescription = "Menu") },
                     label = { Text("Menu") }
                 )
@@ -110,196 +114,190 @@ fun HomeScreen(
             Spacer(modifier = Modifier.height(12.dp))
 
             // Top Bar
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                // Location Selector
-                Box {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(20.dp))
-                            .background(Color(0xFFF5E6D3))
-                            .padding(horizontal = 14.dp, vertical = 8.dp)
-                            .clickable { locationMenuExpanded = true }
-                    ) {
-                        Text(
-                            text = selectedLocation,
-                            color = Color(0xFF795548),
-                            fontSize = 14.sp
-                        )
-                        Icon(
-                            imageVector = Icons.Default.ArrowDropDown,
-                            contentDescription = "Change location",
-                            tint = Color(0xFF795548),
-                            modifier = Modifier.size(20.dp)
-                        )
-                    }
+            CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
 
-                    DropdownMenu(
-                        expanded = locationMenuExpanded,
-                        onDismissRequest = { locationMenuExpanded = false }
-                    ) {
-                        locations.forEach { location ->
-                            DropdownMenuItem(
-                                text = { Text(location) },
-                                onClick = {
-                                    selectedLocation = location
-                                    locationMenuExpanded = false
-                                }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // Location Selector
+                    Box {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(20.dp))
+                                .background(Color(0xFFFFFFFF))
+                                .padding(horizontal = 14.dp, vertical = 8.dp)
+                                .clickable { locationMenuExpanded = true }
+                        ) {
+                            Text(
+                                text = selectedLocation,
+                                color = Color(0xFF174C4F),
+                                fontSize = 14.sp
+                            )
+                            Icon(
+                                imageVector = Icons.Default.ArrowDropDown,
+                                contentDescription = "Change location",
+                                tint = Color(0xFF174C4F),
+                                modifier = Modifier.size(20.dp)
                             )
                         }
-                    }
-                }
 
-                // Cart Icon
-                BadgedBox(
-                    badge = {
-                        if (cartItemCount > 0) {
-                            Badge(
-                                containerColor = Color(0xFF795548),
-                                contentColor = Color.White
-                            ) {
-                                Text(cartItemCount.toString(), fontSize = 12.sp)
+                        DropdownMenu(
+                            expanded = locationMenuExpanded,
+                            onDismissRequest = { locationMenuExpanded = false }
+                        ) {
+                            locations.forEach { location ->
+                                DropdownMenuItem(
+                                    text = { Text(location) },
+                                    onClick = {
+                                        selectedLocation = location
+                                        locationMenuExpanded = false
+                                    }
+                                )
                             }
                         }
                     }
-                ) {
-                    IconButton(onClick = { navController.navigate(Screen.Cart.route) }) {
-                        Icon(
-                            Icons.Default.ShoppingCart,
-                            contentDescription = "Cart",
-                            tint = Color(0xFF795548)
-                        )
+
+                    // Cart Icon
+                    BadgedBox(
+                        badge = {
+                            if (cartItemCount > 0) {
+                                Badge(
+                                    containerColor = Color(0xFF795548),
+                                    contentColor = Color.White
+                                ) {
+                                    Text(cartItemCount.toString(), fontSize = 12.sp)
+                                }
+                            }
+                        }
+                    ) {
+                        IconButton(onClick = { navController.navigate(Screen.Cart.route) }) {
+                            Image(
+                                painter = painterResource(id = com.task.compasetask.R.drawable.ic_shopping),
+                                contentDescription = "Cart",
+                                modifier = Modifier.size(45.dp)
+                            )
+                        }
                     }
                 }
-            }
 
-            Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(20.dp))
 
-            // NEW Banner
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFFFFE0B2))
-            ) {
+                // NEW Banner
+
                 Row(
-                    modifier = Modifier.padding(16.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(end = 16.dp),
+                    horizontalArrangement = Arrangement.Start,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        text = "NEW",
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFF006D5B),
-                        fontSize = 20.sp
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = "Pumpkin Spice donut!",
-                        color = Color(0xFF4A3728),
-                        fontSize = 17.sp,
-                        fontWeight = FontWeight.Medium
-                    )
-                }
-            }
+                        Text(
+                            text = "NEW",
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFF174C4F),
+                            fontSize = 20.sp
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "Pumpkin Spice donut!",
+                            color = Color(0xFF174C4F),
+                            fontSize = 17.sp,
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
 
-            Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(14.dp))
 
-            // Featured
-            // Featured
-            Text(
-                text = "Featured",
-                fontSize = 22.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFF4A3728)
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-// ✅ إضافة horizontalScroll لجعل القائمة تمرير أفقياً
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .horizontalScroll(rememberScrollState()),   // هذه هي الإضافة الأساسية
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                featuredProducts.forEach { product ->
-                    ProductCard(
-                        product = product,
-                        onAddToCart = { cartViewModel.addToCart(product) },
-                        onClick = { navController.navigate(Screen.ProductDetail.passId(product.id)) }
-                    )
-                }
-            }
-            Spacer(modifier = Modifier.height(32.dp))
-
-            // Categories
-            Text(
-                text = "Categories",
-                fontSize = 18.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = Color(0xFF4A3728)
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                categories.forEach { (categoryTitle, _) ->
-                    val isSelected = categoryTitle == selectedCategory
-                    AssistChip(
-                        onClick = { selectedCategory = categoryTitle },
-                        label = {
-                            Text(
-                                categoryTitle,
-                                color = if (isSelected) Color.White else Color(0xFF4A3728)
-                            )
-                        },
-                        colors = AssistChipDefaults.assistChipColors(
-                            containerColor = if (isSelected) Color(0xFFFF8C42) else Color(0xFFF5E6D3),
-                            labelColor = if (isSelected) Color.White else Color(0xFF4A3728)
-                        ),
-                        shape = RoundedCornerShape(20.dp)
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(28.dp))
-
-            // Dynamic Section
-            // Dynamic Section - عرض عمودي (vertical) باستخدام SimpleProductCard
-            val currentProducts = productsForCategory(selectedCategory)
-            if (currentProducts.isNotEmpty()) {
+                // Featured
                 Text(
-                    text = selectedCategory,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color(0xFF4A3728)
-                )
+                    text = "Featured",
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF174C4F),
+                    modifier = Modifier.fillMaxWidth()
+                        .padding(end = 16.dp),
+                    )
 
-                Spacer(modifier = Modifier.height(12.dp))
-
-                // استخدام Column عادي بدون verticalScroll، لأن الصفحة الأم بها تمرير
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    currentProducts.forEach { product ->
-                        SimpleProductCard(
+                    featuredProducts.forEach { product ->
+                        ProductCard(
                             product = product,
+                            onAddToCart = { cartViewModel.addToCart(product) },
                             onClick = { navController.navigate(Screen.ProductDetail.passId(product.id)) }
                         )
                     }
                 }
-            } else {
+                Spacer(modifier = Modifier.height(32.dp))
+
+                // Categories
                 Text(
-                    text = "No products in this category",
-                    color = Color.Gray,
-                    fontSize = 14.sp
+                    text = "Categories",
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF174C4F),
+                    modifier = Modifier.fillMaxWidth()
+                        .padding(end = 16.dp),
                 )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    categories.forEach { (categoryTitle, _) ->
+                        val isSelected = categoryTitle == selectedCategory
+                        AssistChip(
+                            onClick = { selectedCategory = categoryTitle },
+                            label = {
+                                Text(
+                                    categoryTitle,
+                                    color = if (isSelected) Color.White else Color(0xFF174C4F)
+                                )
+                            },
+                            colors = AssistChipDefaults.assistChipColors(
+                                containerColor = if (isSelected) Color(0xFFFF9666) else Color(0xFFFFFFFF),
+                                labelColor = if (isSelected) Color.White else Color(0xFF4A3728)
+                            ),
+                            shape = RoundedCornerShape(20.dp)
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(28.dp))
+
+                // Dynamic Section
+                val currentProducts = productsForCategory(selectedCategory)
+                if (currentProducts.isNotEmpty()) {
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        currentProducts.forEach { product ->
+                            SimpleProductCard(
+                                product = product,
+                                onClick = {
+                                    navController.navigate(
+                                        Screen.ProductDetail.passId(
+                                            product.id
+                                        )
+                                    )
+                                }
+                            )
+                        }
+                    }
+                } else {
+                    Text(
+                        text = "No products in this category",
+                        color = Color.Gray,
+                        fontSize = 14.sp
+                    )
+                }
             }
             Spacer(modifier = Modifier.height(16.dp))
         }

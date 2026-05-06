@@ -1,6 +1,5 @@
 package com.task.compasetask.presentation.viewModel
 
-// CartManager.kt
 import com.task.compasetask.data.models.CartItem
 import com.task.compasetask.data.models.Order
 import com.task.compasetask.data.models.Product
@@ -9,7 +8,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlin.collections.toMutableList
 
 @Singleton
 class CartManager @Inject constructor() {

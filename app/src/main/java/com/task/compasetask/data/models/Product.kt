@@ -135,9 +135,4 @@ fun getProductsByCategory(category: String): List<Product> =
     sampleProducts.filter { it.category == category }
 
 val featuredProducts = sampleProducts.take(2)
-
-val hotDrinks = getProductsByCategory("hot drink")
-val icedDrinks = getProductsByCategory("iced drink")
-val donuts = getProductsByCategory("donut")
-
 fun getProductById(id: Int): Product? = sampleProducts.find { it.id == id }

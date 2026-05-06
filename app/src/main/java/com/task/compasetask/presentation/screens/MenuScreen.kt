@@ -31,11 +31,10 @@ fun MenuScreen(
     val cartItemCount by cartViewModel.cartItemCount.collectAsState()
 
     Scaffold(
-        containerColor = Color(0xFFFFF5E1),
+        containerColor = Color(0xFFFFF6F2),
         bottomBar = {
-            // ==================== Bottom Navigation Bar (مطابق للـ HomeScreen) ====================
             NavigationBar(
-                containerColor = Color(0xFFFFF5E1),
+                containerColor = Color(0xFFFFFFFF),
                 tonalElevation = 0.dp
             ) {
                 NavigationBarItem(

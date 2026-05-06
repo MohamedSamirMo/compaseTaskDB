@@ -2,14 +2,10 @@ package com.task.compasetask.presentation.viewModel
 
 
 import androidx.lifecycle.ViewModel
-import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import com.task.compasetask.data.models.CartItem
-import com.task.compasetask.data.models.Order
 import com.task.compasetask.data.models.Product
+import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+
 @HiltViewModel
 class CartViewModel @Inject constructor(
     private val cartManager: CartManager

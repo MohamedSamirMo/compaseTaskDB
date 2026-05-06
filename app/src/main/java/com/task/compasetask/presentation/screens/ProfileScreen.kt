@@ -32,11 +32,10 @@ fun ProfileScreen(
     val cartItemCount by cartViewModel.cartItemCount.collectAsState()
 
     Scaffold(
-        containerColor = Color(0xFFFFF5E1),
+        containerColor = Color(0xFFFFF6F2),
         bottomBar = {
-            // ==================== Bottom Navigation Bar (مطابق للـ HomeScreen) ====================
             NavigationBar(
-                containerColor = Color(0xFFFFF5E1),
+                containerColor = Color(0xFFFFFFFF),
                 tonalElevation = 0.dp
             ) {
                 NavigationBarItem(
@@ -47,7 +46,7 @@ fun ProfileScreen(
                 )
                 NavigationBarItem(
                     selected = false,
-                    onClick = { navController.navigate(Screen.Menu.route) },
+                    onClick = { navController.navigate(Screen.Orders.route) },
                     icon = { Icon(Icons.Default.Menu, contentDescription = "Menu") },
                     label = { Text("Menu") }
                 )
@@ -71,8 +70,8 @@ fun ProfileScreen(
                     label = { Text("Cart") }
                 )
                 NavigationBarItem(
-                    selected = true, // لأننا في شاشة Profile
-                    onClick = { /* بالفعل في Profile */ },
+                    selected = true,
+                    onClick = {  },
                     icon = { Icon(Icons.Default.Person, contentDescription = "Profile") },
                     label = { Text("Profile") }
                 )
@@ -89,7 +88,6 @@ fun ProfileScreen(
         ) {
             Spacer(modifier = Modifier.height(20.dp))
 
-            // صورة رمزية للمستخدم
             Box(
                 modifier = Modifier
                     .size(100.dp)
@@ -122,7 +120,6 @@ fun ProfileScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // بطاقة معلومات إضافية
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp),
@@ -135,7 +132,6 @@ fun ProfileScreen(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.fillMaxWidth()
                     ) {
-//                        Icon(Icons.Default.AccountCircle, tint = Color(0xFF795548))
                         Spacer(modifier = Modifier.width(12.dp))
                         Text(
                             text = "Order History",
@@ -149,7 +145,6 @@ fun ProfileScreen(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.fillMaxWidth()
                     ) {
-//                        Icon(Icons.Default.LocationOn, tint = Color(0xFF795548))
                         Spacer(modifier = Modifier.width(12.dp))
                         Text(
                             text = "Saved Addresses",
@@ -163,7 +158,6 @@ fun ProfileScreen(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.fillMaxWidth()
                     ) {
-//                        Icon(Icons.Default.Settings, tint = Color(0xFF795548))
                         Spacer(modifier = Modifier.width(12.dp))
                         Text(
                             text = "Settings",
@@ -177,7 +171,6 @@ fun ProfileScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // زر تسجيل الخروج (اختياري)
             Button(
                 onClick = { navController.navigate(Screen.SignIn.route) },
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF8C42)),

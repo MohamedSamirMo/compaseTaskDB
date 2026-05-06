@@ -61,7 +61,6 @@ class SignUpViewModel @Inject constructor() : ViewModel() {
                 _uiState.value = _uiState.value.copy(isLoading = false, errorMessage = "Password too short")
                 return@launch
             }
-            // محاكاة إنشاء حساب ناجح
             _uiState.value = _uiState.value.copy(isLoading = false, isSignUpSuccess = true)
         }
     }

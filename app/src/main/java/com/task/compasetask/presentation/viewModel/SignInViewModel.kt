@@ -41,7 +41,6 @@ class SignInViewModel @Inject constructor() : ViewModel() {
             }
             SignInEvent.SignInClicked -> performSignIn()
             SignInEvent.ForgotPasswordClicked -> {
-                // عرض رسالة توضيحية
                 _uiState.value = _uiState.value.copy(errorMessage = "Reset link sent to your email")
             }
             SignInEvent.ResetError -> {
@@ -53,11 +52,9 @@ class SignInViewModel @Inject constructor() : ViewModel() {
     private fun performSignIn() {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
-            // محاكاة التحقق من صحة الإيميل/كلمة المرور
             val email = _uiState.value.email
             val password = _uiState.value.password
             if (email.isNotBlank() && password.length >= 4) {
-                // نجاح تسجيل الدخول
                 _uiState.value = _uiState.value.copy(isLoading = false, isSignInSuccess = true)
             } else {
                 _uiState.value = _uiState.value.copy(

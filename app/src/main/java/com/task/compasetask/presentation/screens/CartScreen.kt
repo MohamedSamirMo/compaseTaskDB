@@ -11,7 +11,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.task.compasetask.presentation.CartItemRow
@@ -40,10 +42,10 @@ fun CartScreen(
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color(0xFFFFF5E1))
             )
         },
+        containerColor = Color(0xFFFFF6F2), // نفس خلفية HomeScreen
         bottomBar = {
-            // ==================== Bottom Navigation Bar (مطابق للـ HomeScreen) ====================
             NavigationBar(
-                containerColor = Color(0xFFFFF5E1),
+                containerColor = Color.White,
                 tonalElevation = 0.dp
             ) {
                 NavigationBarItem(
@@ -54,13 +56,13 @@ fun CartScreen(
                 )
                 NavigationBarItem(
                     selected = false,
-                    onClick = { navController.navigate(Screen.Menu.route) },
+                    onClick = { navController.navigate(Screen.Orders.route) },
                     icon = { Icon(Icons.Default.Menu, contentDescription = "Menu") },
                     label = { Text("Menu") }
                 )
                 NavigationBarItem(
-                    selected = true, // لأننا في شاشة Cart
-                    onClick = { /* بالفعل في Cart */ },
+                    selected = true,
+                    onClick = { },
                     icon = {
                         BadgedBox(
                             badge = {
@@ -90,19 +92,24 @@ fun CartScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
+                .padding(horizontal = 16.dp) // إضافة padding أفقي مماثل لـ HomeScreen
         ) {
             if (cartItems.isEmpty()) {
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text("Your cart is empty", style = MaterialTheme.typography.titleMedium)
+                    Text(
+                        text = "Your cart is empty",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = Color(0xFF174C4F) // نفس لون النص الداكن في HomeScreen
+                    )
                 }
             } else {
                 LazyColumn(
                     modifier = Modifier.weight(1f),
-                    contentPadding = PaddingValues(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                    contentPadding = PaddingValues(vertical = 16.dp), // مسافات رأسية متسقة
+                    verticalArrangement = Arrangement.spacedBy(12.dp) // نفس تباعد البطاقات
                 ) {
                     items(cartItems) { cartItem ->
                         CartItemRow(
@@ -113,32 +120,64 @@ fun CartScreen(
                         )
                     }
                 }
-                Divider(thickness = 1.dp)
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // بطاقة إجمالي السعر (مشابهة لـ SimpleProductCard ولكن للتوتال)
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = MaterialTheme.shapes.medium,
+                    colors = CardDefaults.cardColors(containerColor = Color.White),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
                 ) {
-                    Text("Total:", style = MaterialTheme.typography.titleLarge)
-                    Text("$${String.format("%.2f", totalPrice)}", style = MaterialTheme.typography.titleLarge)
+                    Column(
+                        modifier = Modifier.padding(16.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text(
+                                text = "Total",
+                                style = MaterialTheme.typography.titleLarge,
+                                color = Color(0xFF174C4F),
+                                fontWeight = FontWeight.Bold
+                            )
+                            Text(
+                                text = "$${String.format("%.2f", totalPrice)}",
+                                style = MaterialTheme.typography.titleLarge,
+                                color = Color(0xFF795548),
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
                 }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
                 Button(
                     onClick = { viewModel.checkout() },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp),
+                        .height(52.dp),
                     shape = MaterialTheme.shapes.medium,
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF795548))
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF795548) // نفس لون الأزرار في HomeScreen
+                    )
                 ) {
-                    Text("Checkout", color = Color.White)
+                    Text(
+                        text = "Checkout",
+                        color = Color.White,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold
+                    )
                 }
+
                 Spacer(modifier = Modifier.height(16.dp))
             }
         }
     }
 
-    // مراقبة نجاح إنشاء الطلب للانتقال إلى شاشة الطلبات
     val checkoutSuccess by viewModel.checkoutSuccess.collectAsState()
     LaunchedEffect(checkoutSuccess) {
         if (checkoutSuccess) {

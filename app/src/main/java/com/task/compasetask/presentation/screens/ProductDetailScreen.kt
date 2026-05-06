@@ -96,18 +96,16 @@ fun ProductDetailScreen(
             }
         }
     ) { paddingValues ->
-        // داخل Scaffold، استبدل الـ Column الخارجي بهذا الهيكل:
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            // 1. صورة المنتج (أيقونة) في الأعلى، خارج الكارد الأبيض
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(200.dp)
-                    .padding(horizontal = 16.dp) // اختياري: لجعل الصورة متوسطة وليست لاصقة بالحواف (يمكنك إزالتها لو حابب تكون ممتدة)
+                    .padding(horizontal = 16.dp)
                     .clip(RoundedCornerShape(16.dp))
                     .background(Color(0xFFFFF6F2)),
                 contentAlignment = Alignment.Center
@@ -126,17 +124,15 @@ fun ProductDetailScreen(
                     .fillMaxWidth()
                     .weight(1f)
                     .padding(top = 0.dp) ,
-                shape = RoundedCornerShape(topEnd = 24.dp, topStart = 24.dp),   // زوايا دائرية من كل الجوانب
+                shape = RoundedCornerShape(topEnd = 24.dp, topStart = 24.dp),
                 colors = CardDefaults.cardColors(containerColor = Color.White),
                 elevation = CardDefaults.cardElevation(4.dp)
             ) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp)   // مسافة داخلية للمحتوى (نصوص، أزرار، إلخ)
+                        .padding(16.dp)
                 ) {
-                    // باقي المحتوى كما هو دون تغيير:
-                    // Row: أيقونة المفضلة + اسم المنتج
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
@@ -169,7 +165,6 @@ fun ProductDetailScreen(
                     Spacer(modifier = Modifier.height(12.dp))
                     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
 
-                        // الوصف القصير + السعرات + زر إظهار التفاصيل
                         var showDescription by remember { mutableStateOf(false) }
                         Column(
                             modifier = Modifier.fillMaxWidth(),
@@ -233,7 +228,6 @@ fun ProductDetailScreen(
                                 )
                             }
                         }
-                        // نهاية المحتوى الداخلي للكارد الأبيض
                     }
                 }
             }
